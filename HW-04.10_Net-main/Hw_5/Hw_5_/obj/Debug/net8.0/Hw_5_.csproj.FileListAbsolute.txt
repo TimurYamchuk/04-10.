@@ -1,0 +1,14 @@
+C:\Users\aerty\source\repos\kurs3\Hw_5\Hw_5_\obj\Debug\net8.0\Hw_5_.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\aerty\source\repos\kurs3\Hw_5\Hw_5_\obj\Debug\net8.0\Hw_5_.AssemblyInfoInputs.cache
+C:\Users\aerty\source\repos\kurs3\Hw_5\Hw_5_\obj\Debug\net8.0\Hw_5_.AssemblyInfo.cs
+C:\Users\aerty\source\repos\kurs3\Hw_5\Hw_5_\obj\Debug\net8.0\Hw_5_.csproj.CoreCompileInputs.cache
+C:\Users\aerty\source\repos\kurs3\Hw_5\Hw_5_\bin\Debug\net8.0\Hw_5_.exe
+C:\Users\aerty\source\repos\kurs3\Hw_5\Hw_5_\bin\Debug\net8.0\Hw_5_.deps.json
+C:\Users\aerty\source\repos\kurs3\Hw_5\Hw_5_\bin\Debug\net8.0\Hw_5_.runtimeconfig.json
+C:\Users\aerty\source\repos\kurs3\Hw_5\Hw_5_\bin\Debug\net8.0\Hw_5_.dll
+C:\Users\aerty\source\repos\kurs3\Hw_5\Hw_5_\bin\Debug\net8.0\Hw_5_.pdb
+C:\Users\aerty\source\repos\kurs3\Hw_5\Hw_5_\obj\Debug\net8.0\Hw_5_.dll
+C:\Users\aerty\source\repos\kurs3\Hw_5\Hw_5_\obj\Debug\net8.0\refint\Hw_5_.dll
+C:\Users\aerty\source\repos\kurs3\Hw_5\Hw_5_\obj\Debug\net8.0\Hw_5_.pdb
+C:\Users\aerty\source\repos\kurs3\Hw_5\Hw_5_\obj\Debug\net8.0\Hw_5_.genruntimeconfig.cache
+C:\Users\aerty\source\repos\kurs3\Hw_5\Hw_5_\obj\Debug\net8.0\ref\Hw_5_.dll
