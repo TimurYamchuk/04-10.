@@ -1,72 +1,96 @@
 using System;
 using static System.Console;
-using Hw_5_CustomDate;
 
-class Hw_5_Client
+namespace Hw_5_CustomDate
 {
-    static void Main()
+    class Date
     {
-        try
+        private int day;
+        private int month;
+        private int year;
+
+        public int Day
         {
-
-            Date defaultDate = new Date();
-            WriteLine("Дата по умолчанию:");
-            PrintDateInfo(defaultDate);
-
-            WriteLine("\nВведите дату (день месяц год) по отдельности:");
-            int day = int.Parse(ReadLine());
-            int month = int.Parse(ReadLine());
-            int year = int.Parse(ReadLine());
-
-            Date userDate = new Date(day, month, year);
-            WriteLine("Введенная дата:");
-            PrintDateInfo(userDate);
-
-            int difference = defaultDate - userDate;
-            WriteLine($"\nРазница между датами в днях: {difference}");
-
-            WriteLine("\nВведите количество дней для изменения даты:");
-            int daysToAdd = int.Parse(ReadLine());
-            userDate += daysToAdd; 
-            WriteLine($"Новая дата после добавления {daysToAdd} дней:");
-            PrintDateInfo(userDate);
-
-            WriteLine("\nДобавляем один день с помощью оператора '++':");
-            userDate++;
-            PrintDateInfo(userDate);
-
-            WriteLine("\nВычитаем один день с помощью оператора '--':");
-            userDate--;
-            PrintDateInfo(userDate);
-
-            WriteLine("\nСравнение дат:");
-            Date comparisonDate = new Date(15, 8, 2025);
-            CompareDates(defaultDate, userDate, comparisonDate);
+            get => day;
+            set { if (IsValidDate(value, month, year)) day = value; }
         }
-        catch (Exception ex)
+
+        public int Month
         {
-            WriteLine("Ошибка: " + ex.Message);
+            get => month;
+            set { if (IsValidDate(day, value, year)) month = value; }
         }
-    }
 
-    static void PrintDateInfo(Date date)
-    {
-        date.PrintDate();
-        WriteLine($"День недели: {date.Day_Of_Week}");
-    }
+        public int Year
+        {
+            get => year;
+            set { if (IsValidDate(day, month, value)) year = value; }
+        }
 
-    static void CompareDates(Date date1, Date date2, Date date3)
-    {
-        WriteLine("Дата 1:");
-        date1.PrintDate();
-        WriteLine("Дата 2:");
-        date2.PrintDate();
-        WriteLine("Дата 3:");
-        date3.PrintDate();
+        public string Day_Of_Week
+        {
+            get
+            {
+                int d = day, m = month < 3 ? month + 12 : month, y = month < 3 ? year - 1 : year;
+                int h = (d + (13 * (m + 1)) / 5 + y % 100 + (y % 100) / 4 + (y / 100) / 4 - 2 * (y / 100)) % 7;
+                return new[] { "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота" }[(h + 7) % 7];
+            }
+        }
 
-        WriteLine(date1 > date2 ? "Дата 1 больше Даты 2" : "Дата 1 меньше или равна Дате 2");
-        WriteLine(date1 < date3 ? "Дата 1 меньше Даты 3" : "Дата 1 больше или равна Дате 3");
-        WriteLine(date1 == date2 ? "Дата 1 идентична Дате 2" : "Дата 1 не идентична Дате 2");
-        WriteLine(date1 != date3 ? "Дата 1 не равна Дате 3" : "Дата 1 равна Дате 3");
+        public Date() : this(1, 1, 2000) {}
+
+        public Date(int day, int month, int year)
+        {
+            if (IsValidDate(day, month, year)) (this.day, this.month, this.year) = (day, month, year);
+            else (this.day, this.month, this.year) = (1, 1, 2000);
+        }
+
+        private bool IsValidDate(int day, int month, int year)
+        {
+            if (year < 1 || month < 1 || month > 12) return false;
+            int[] daysInMonth = { 31, IsLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+            return day >= 1 && day <= daysInMonth[month - 1];
+        }
+
+        private bool IsLeapYear(int year) => (year % 400 == 0) || (year % 100 != 0 && year % 4 == 0);
+
+        public int DifferenceInDays(Date other) => Math.Abs(CountDays() - other.CountDays());
+
+        private int CountDays()
+        {
+            int days = day + (year - 1) * 365 + (year - 1) / 4 - (year - 1) / 100 + (year - 1) / 400;
+            int[] daysInMonth = { 31, IsLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+            for (int m = 0; m < month - 1; m++) days += daysInMonth[m];
+            return days;
+        }
+
+        public void AddDays(int daysToAdd)
+        {
+            int totalDays = CountDays() + daysToAdd;
+            int newYear = 1;
+            while (true)
+            {
+                int daysInYear = IsLeapYear(newYear) ? 366 : 365;
+                if (totalDays > daysInYear) { totalDays -= daysInYear; newYear++; }
+                else break;
+            }
+
+            int[] daysInMonth = { 31, IsLeapYear(newYear) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+            int newMonth = 1;
+            while (totalDays > daysInMonth[newMonth - 1]) totalDays -= daysInMonth[newMonth++ - 1];
+
+            (day, month, year) = (totalDays, newMonth, newYear);
+        }
+
+        public void PrintDate() => WriteLine($"{day:D2}.{month:D2}.{year}");
+
+        public static int operator -(Date d1, Date d2) => d1.DifferenceInDays(d2);
+        public static Date operator +(Date d, int days) { Date result = new(d.day, d.month, d.year); result.AddDays(days); return result; }
+        public static Date operator ++(Date d) => d + 1;
+        public static Date operator --(Date d) => d + (-1);
+        public static bool operator >(Date d1, Date d2) => d1.CountDays() > d2.CountDays();
+        public static bool operator <(Date d1, Date d2) => d1.CountDays() < d2.CountDays();
+        public static bool operator ==(Date d1, Date d2) => d1.day == d2.day && d1.month == d2.month && d1.year == d2.year;
+        public static bool operator !=(Date d1, Date d2) => !(d1 == d2);
     }
 }
