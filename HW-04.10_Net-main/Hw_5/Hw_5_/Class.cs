@@ -8,64 +8,92 @@ class Hw_5_Client
     {
         try
         {
-            Date defaultDate = new Date();
-            WriteLine("Дата по умолчанию:");
-            PrintDateInfo(defaultDate);
+            Date date1 = new Date();
+            WriteLine("Hi! Let's start by checking the default date:");
+            date1.PrintDate();
+            WriteLine($"The day of the week is: {date1.Day_Of_Week}");
 
-            WriteLine("\nВведите дату (день месяц год) по отдельности:");
+            WriteLine("\nNow, let's create a custom date. Please enter the day, month, and year one by one:");
+            Write("Day: ");
             int day = int.Parse(ReadLine());
+            Write("Month: ");
             int month = int.Parse(ReadLine());
+            Write("Year: ");
             int year = int.Parse(ReadLine());
 
-            Date userDate = new Date(day, month, year);
-            WriteLine("Введенная дата:");
-            PrintDateInfo(userDate);
+            Date date2 = new Date(day, month, year);
+            WriteLine("Here’s the date you entered:");
+            date2.PrintDate();
+            WriteLine($"The day of the week is: {date2.Day_Of_Week}");
 
-            int difference = defaultDate - userDate;
-            WriteLine($"\nРазница между датами в днях: {difference}");
+            int difference = date1 - date2;
+            WriteLine($"\nThe difference between the default date and the one you entered is {difference} days.");
 
-            WriteLine("\nВведите количество дней для изменения даты:");
+            WriteLine("\nHow many days would you like to add to this date?");
             int daysToAdd = int.Parse(ReadLine());
-            userDate += daysToAdd; 
-            WriteLine($"Новая дата после добавления {daysToAdd} дней:");
-            PrintDateInfo(userDate);
+            date2 = date2 + daysToAdd; 
+            WriteLine($"After adding {daysToAdd} days, the new date is:");
+            date2.PrintDate();
+            WriteLine($"The new day of the week is: {date2.Day_Of_Week}");
 
-            WriteLine("\nДобавляем один день с помощью оператора '++':");
-            userDate++;
-            PrintDateInfo(userDate);
+            WriteLine("\nLet's add one more day using the '++' operator.");
+            date2++;
+            date2.PrintDate();
+            WriteLine($"The day of the week after incrementing is: {date2.Day_Of_Week}");
 
-            WriteLine("\nВычитаем один день с помощью оператора '--':");
-            userDate--;
-            PrintDateInfo(userDate);
+            WriteLine("\nNow, let's subtract one day using the '--' operator.");
+            date2--;
+            date2.PrintDate();
+            WriteLine($"The day of the week after decrementing is: {date2.Day_Of_Week}");
 
-            WriteLine("\nСравнение дат:");
-            Date comparisonDate = new Date(15, 8, 2025);
-            CompareDates(defaultDate, userDate, comparisonDate);
+            WriteLine("\nLet's compare a few dates.");
+            Date date3 = new Date(15, 8, 2025);
+            WriteLine("Here’s the default date:");
+            date1.PrintDate();
+            WriteLine("Here’s the second date (after all operations):");
+            date2.PrintDate();
+            WriteLine("And here’s a third date (15.08.2025):");
+            date3.PrintDate();
+
+            if (date1 > date2)
+            {
+                WriteLine("The default date is later than the second date.");
+            }
+            else
+            {
+                WriteLine("The default date is earlier than or equal to the second date.");
+            }
+
+            if (date1 < date3)
+            {
+                WriteLine("The default date is earlier than the third date.");
+            }
+
+            if (date1 == date2)
+            {
+                WriteLine("The default date and the second date are identical.");
+            }
+            else
+            {
+                WriteLine("The default date and the second date are not identical.");
+            }
+
+            if (date1 != date2)
+            {
+                WriteLine("The default date is different from the second date.");
+            }
+            else
+            {
+                WriteLine("The default date matches the second date.");
+            }
+        }
+        catch (FormatException)
+        {
+            WriteLine("Oops! It seems like you entered a non-numeric value. Please enter a valid number for the day, month, and year.");
         }
         catch (Exception ex)
         {
-            WriteLine("Ошибка: " + ex.Message);
+            WriteLine($"Something went wrong: {ex.Message}");
         }
-    }
-
-    static void PrintDateInfo(Date date)
-    {
-        date.PrintDate();
-        WriteLine($"День недели: {date.Day_Of_Week}");
-    }
-
-    static void CompareDates(Date date1, Date date2, Date date3)
-    {
-        WriteLine("Дата 1:");
-        date1.PrintDate();
-        WriteLine("Дата 2:");
-        date2.PrintDate();
-        WriteLine("Дата 3:");
-        date3.PrintDate();
-
-        WriteLine(date1 > date2 ? "Дата 1 больше Даты 2" : "Дата 1 меньше или равна Дате 2");
-        WriteLine(date1 < date3 ? "Дата 1 меньше Даты 3" : "Дата 1 больше или равна Дате 3");
-        WriteLine(date1 == date2 ? "Дата 1 идентична Дате 2" : "Дата 1 не идентична Дате 2");
-        WriteLine(date1 != date3 ? "Дата 1 не равна Дате 3" : "Дата 1 равна Дате 3");
     }
 }
