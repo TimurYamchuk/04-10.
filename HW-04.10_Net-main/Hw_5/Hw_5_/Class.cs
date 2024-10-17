@@ -1,99 +1,255 @@
 using System;
-using static System.Console;
-using Hw_5_CustomDate;
 
-class Hw_5_Client
+namespace Hw_5_CustomDate
 {
-    static void Main()
+    class Date
     {
-        try
+        private int day;
+        private int month;
+        private int year;
+
+        public int Day
         {
-            Date date1 = new Date();
-            WriteLine("Hi! Let's start by checking the default date:");
-            date1.PrintDate();
-            WriteLine($"The day of the week is: {date1.Day_Of_Week}");
-
-            WriteLine("\nNow, let's create a custom date. Please enter the day, month, and year one by one:");
-            Write("Day: ");
-            int day = int.Parse(ReadLine());
-            Write("Month: ");
-            int month = int.Parse(ReadLine());
-            Write("Year: ");
-            int year = int.Parse(ReadLine());
-
-            Date date2 = new Date(day, month, year);
-            WriteLine("Here’s the date you entered:");
-            date2.PrintDate();
-            WriteLine($"The day of the week is: {date2.Day_Of_Week}");
-
-            int difference = date1 - date2;
-            WriteLine($"\nThe difference between the default date and the one you entered is {difference} days.");
-
-            WriteLine("\nHow many days would you like to add to this date?");
-            int daysToAdd = int.Parse(ReadLine());
-            date2 = date2 + daysToAdd; 
-            WriteLine($"After adding {daysToAdd} days, the new date is:");
-            date2.PrintDate();
-            WriteLine($"The new day of the week is: {date2.Day_Of_Week}");
-
-            WriteLine("\nLet's add one more day using the '++' operator.");
-            date2++;
-            date2.PrintDate();
-            WriteLine($"The day of the week after incrementing is: {date2.Day_Of_Week}");
-
-            WriteLine("\nNow, let's subtract one day using the '--' operator.");
-            date2--;
-            date2.PrintDate();
-            WriteLine($"The day of the week after decrementing is: {date2.Day_Of_Week}");
-
-            WriteLine("\nLet's compare a few dates.");
-            Date date3 = new Date(15, 8, 2025);
-            WriteLine("Here’s the default date:");
-            date1.PrintDate();
-            WriteLine("Here’s the second date (after all operations):");
-            date2.PrintDate();
-            WriteLine("And here’s a third date (15.08.2025):");
-            date3.PrintDate();
-
-            if (date1 > date2)
+            get { return day; }
+            set
             {
-                WriteLine("The default date is later than the second date.");
-            }
-            else
-            {
-                WriteLine("The default date is earlier than or equal to the second date.");
-            }
-
-            if (date1 < date3)
-            {
-                WriteLine("The default date is earlier than the third date.");
-            }
-
-            if (date1 == date2)
-            {
-                WriteLine("The default date and the second date are identical.");
-            }
-            else
-            {
-                WriteLine("The default date and the second date are not identical.");
-            }
-
-            if (date1 != date2)
-            {
-                WriteLine("The default date is different from the second date.");
-            }
-            else
-            {
-                WriteLine("The default date matches the second date.");
+                if (!IsValidDate(value, month, year))
+                {
+                    throw new ArgumentOutOfRangeException("Day", $"Invalid day: {value} for the given month: {month} and year: {year}");
+                }
+                day = value;
             }
         }
-        catch (FormatException)
+
+        public int Month
         {
-            WriteLine("Oops! It seems like you entered a non-numeric value. Please enter a valid number for the day, month, and year.");
+            get { return month; }
+            set
+            {
+                if (!IsValidDate(day, value, year))
+                {
+                    throw new ArgumentOutOfRangeException("Month", $"Invalid month: {value} for the given day: {day} and year: {year}");
+                }
+                month = value;
+            }
         }
-        catch (Exception ex)
+
+        public int Year
         {
-            WriteLine($"Something went wrong: {ex.Message}");
+            get { return year; }
+            set
+            {
+                if (!IsValidDate(day, month, value))
+                {
+                    throw new ArgumentOutOfRangeException("Year", $"Invalid year: {value}");
+                }
+                year = value;
+            }
+        }
+
+        public string Day_Of_Week
+        {
+            get
+            {
+                int d = day;
+                int m = month;
+                int y = year;
+
+                if (m < 3)
+                {
+                    m += 12;
+                    y -= 1;
+                }
+
+                int K = y % 100;
+                int J = y / 100;
+                int h = (d + (13 * (m + 1)) / 5 + K + (K / 4) + (J / 4) + 5 * J) % 7;
+                int dayOfWeek = ((h + 5) % 7) + 1;
+
+                return dayOfWeek switch
+                {
+                    1 => "Monday",
+                    2 => "Tuesday",
+                    3 => "Wednesday",
+                    4 => "Thursday",
+                    5 => "Friday",
+                    6 => "Saturday",
+                    7 => "Sunday",
+                    _ => "Unknown day"
+                };
+            }
+        }
+
+        public Date()
+        {
+            day = 1;
+            month = 1;
+            year = 2000;
+        }
+
+        public Date(int day, int month, int year)
+        {
+            if (!IsValidDate(day, month, year))
+            {
+                throw new ArgumentOutOfRangeException("Date", $"Invalid date: {day}.{month}.{year}");
+            }
+            this.day = day;
+            this.month = month;
+            this.year = year;
+        }
+
+        private bool IsValidDate(int day, int month, int year)
+        {
+            if (year < 1 || month < 1 || month > 12)
+                return false;
+
+            int[] daysInMonth =
+            {
+                31, IsLeapYear(year) ? 29 : 28, 31, 30, 31, 30,
+                31, 31, 30, 31, 30, 31
+            };
+
+            if (day < 1 || day > daysInMonth[month - 1])
+                return false;
+
+            return true;
+        }
+
+        private bool IsLeapYear(int year)
+        {
+            if (year % 400 == 0)
+                return true;
+            else if (year % 100 == 0)
+                return false;
+            else if (year % 4 == 0)
+                return true;
+            else
+                return false;
+        }
+
+        public int DifferenceInDays(Date other)
+        {
+            int totalDays1 = CountDays(this);
+            int totalDays2 = CountDays(other);
+
+            return Math.Abs(totalDays1 - totalDays2);
+        }
+
+        private int CountDays(Date date)
+        {
+            int days = date.day;
+
+            for (int y = 1; y < date.year; y++)
+            {
+                days += IsLeapYear(y) ? 366 : 365;
+            }
+
+            int[] daysInMonth =
+            {
+                31, IsLeapYear(date.year) ? 29 : 28, 31, 30, 31, 30,
+                31, 31, 30, 31, 30, 31
+            };
+
+            for (int m = 1; m < date.month; m++)
+            {
+                days += daysInMonth[m - 1];
+            }
+
+            return days;
+        }
+
+        public void AddDays(int daysToAdd)
+        {
+            int totalDays = CountDays(this) + daysToAdd;
+
+            int newYear = 1;
+            while (true)
+            {
+                int daysInYear = IsLeapYear(newYear) ? 366 : 365;
+                if (totalDays > daysInYear)
+                {
+                    totalDays -= daysInYear;
+                    newYear++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            int[] daysInMonth =
+            {
+                31, IsLeapYear(newYear) ? 29 : 28, 31, 30, 31, 30,
+                31, 31, 30, 31, 30, 31
+            };
+            int newMonth = 1;
+            while (true)
+            {
+                if (totalDays > daysInMonth[newMonth - 1])
+                {
+                    totalDays -= daysInMonth[newMonth - 1];
+                    newMonth++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            day = totalDays;
+            month = newMonth;
+            year = newYear;
+        }
+
+        public void PrintDate()
+        {
+            Console.WriteLine($"The current date is: {day:D2}.{month:D2}.{year}. Enjoy the moment!");
+        }
+
+        public static Date operator +(Date date, int daysToAdd)
+        {
+            Date newDate = new Date(date.day, date.month, date.year);
+            newDate.AddDays(daysToAdd);
+            return newDate;
+        }
+
+        public static Date operator -(Date date, int daysToSubtract)
+        {
+            return date + (-daysToSubtract);
+        }
+
+        public static bool operator >(Date date1, Date date2)
+        {
+            return date1.CountDays(date1) > date2.CountDays(date2);
+        }
+
+        public static bool operator <(Date date1, Date date2)
+        {
+            return date1.CountDays(date1) < date2.CountDays(date2);
+        }
+
+        public static bool operator ==(Date date1, Date date2)
+        {
+            return date1.day == date2.day && date1.month == date2.month && date1.year == date2.year;
+        }
+
+        public static bool operator !=(Date date1, Date date2)
+        {
+            return !(date1 == date2);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Date date)
+            {
+                return this == date;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return (day, month, year).GetHashCode();
         }
     }
 }
